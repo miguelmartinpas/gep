@@ -1,4 +1,9 @@
 module.exports = {
+  options: {
+    root: '',
+    src: 'src',
+    index: 'index'
+  },
   use: [
     [
       '@neutrinojs/airbnb',
@@ -30,6 +35,21 @@ module.exports = {
         }
       }
     ],
-    '@neutrinojs/jest'
+    ['@neutrinojs/jest', {
+      "verbose": true,
+      "testRegex": "src/.*\\.test\\.js$",
+      'moduleDirectories': [
+        'src',
+        'node_modules'
+      ],
+      "setupFiles": [
+        "raf/polyfill"
+      ],
+      moduleNameMapper: {
+        '^.+\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/private/jest/fileMock.js',
+        '^components$': '<rootDir>/private/jest/componentsMock.js'
+      },
+      setupTestFrameworkScriptFile: '<rootDir>/private/jest/setupTests.js',
+    }]
   ]
 };
