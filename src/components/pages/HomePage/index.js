@@ -2,14 +2,10 @@
 import React from 'react';
 import moment from 'moment';
 import firebase from 'firebase';
-import { firebaseConfig } from '../../../config';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-
-/* const HomePage = () => (
-  <div>Hello World</div>
-); */
+import * as Actions from '../../../actions';
 
 class HomePage extends React.Component {
   constructor() {
@@ -25,6 +21,7 @@ class HomePage extends React.Component {
     this.setAccess();
 
     users.on('value', (snapshot) => {
+      console.log('users', snapshot.val());
       this.setState({
         users: snapshot.val()
       });
@@ -47,11 +44,16 @@ class HomePage extends React.Component {
   }
 
   getListOfUser() {
-    return this.state.users.map(user => <li key={user.name}>{user.name} / {user.mail}</li>);
+    return Object.keys(this.state.users)
+      .map(key => (
+        <li key={this.state.users[key].name}>
+          {this.state.users[key].name} / {this.state.users[key].mail}
+        </li>
+      ));
   }
 
   getListOfAccess() {
-    return this.state.access.map(item => <li key={item}>{item}</li>);
+    return this.state.access && this.state.access.map(item => <li key={item}>{item}</li>);
   }
 
   render() {
@@ -64,4 +66,16 @@ class HomePage extends React.Component {
   }
 }
 
-export default HomePage;
+function mapStateToProps(state) {
+  return {
+    users: state.users
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    fetchUsers: Actions.fetchUsers
+  }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
